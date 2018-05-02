@@ -9,6 +9,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.R.bool;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
@@ -19,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.ToggleButton;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -36,7 +38,7 @@ class RetrieveFeedTask extends AsyncTask<String, String, String> {
 	           HttpResponse response = httpclient.execute(request);
 	           BufferedReader in = new BufferedReader(new InputStreamReader(
 	                   response.getEntity().getContent()));
-	           Log.d("getter", urls[0]);
+
 	           // NEW CODE
 	           String line = in.readLine();
 	           //textv.append(" First line: " + line);
@@ -121,7 +123,7 @@ public class MainActivity extends Activity {
     	if (sw != null)
     		sw.setChecked(true);
     	if (sb != null)
-    		sb.setProgress(sb.getProgress()+1);
+    		sb.setProgress(sb.getProgress()+5);
     }
     
     public void decreaseBrightness(View view) {
@@ -158,7 +160,7 @@ public class MainActivity extends Activity {
     	Log.d("dimmer", String.valueOf(i));
 		new RetrieveFeedTask().execute("http://192.168.1.228/test.sh?button=" + String.valueOf(i) + "&dimm=1");
 		if (sb != null) {
-			sb.setProgress(sb.getProgress()-1);
+			sb.setProgress(sb.getProgress()-5);
 			if (sb.getProgress() <= 0)
 				sw.setChecked(false);
 				new RetrieveFeedTask().execute("http://192.168.1.228/test.sh?button=" + String.valueOf(i) + "&state=off");
@@ -265,9 +267,11 @@ public class MainActivity extends Activity {
             	seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
               @Override
-              public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
-                if (fromUser) {                
-                	new RetrieveFeedTask().execute("http://192.168.1.228/test.sh?button=0&absdimm="+String.valueOf(progressValue));
+              public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
+                if (fromUser)
+                    Log.d("dimmer","bar1");
+
+                	new RetrieveFeedTask().execute("http://192.168.1.228/test.sh?button=0&state=on");
                 	/* BROKEN CODE */
                 	ViewGroup v = (ViewGroup) seekBar.getParent();
                 	for (int itemPos = 0; itemPos < v.getChildCount(); itemPos++) {
@@ -281,7 +285,6 @@ public class MainActivity extends Activity {
                 				((ToggleButton)tb).setChecked(false);
                 		}
                 	}
-                }
               }
 
               @Override
